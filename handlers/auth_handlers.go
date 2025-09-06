@@ -6,6 +6,7 @@ import (
 	"squadify-app/config"
 	"squadify-app/dto"
 	"squadify-app/models"
+	"squadify-app/utils"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -49,5 +50,34 @@ func Register(c *gin.Context) {
 		"message":  "Registration successful",
 		"username": user.Username,
 		"email":    user.Email,
+	})
+}
+
+// Login User
+func Login(c *gin.Context) {
+	var input dto.LoginInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid input: %v", err)})
+		return
+	}
+
+	var user models.User
+
+	// Find user where "email"
+	if err := config.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Email or Password are incorrect"})
+		return
+	}
+
+	// Check Password
+	if !utils.CheckPassword(user.Password, input.Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Email or Password are unmatch"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Login Successfull",
+		"user":    user.Password,
 	})
 }
