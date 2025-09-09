@@ -51,19 +51,23 @@ func Login(c *gin.Context) {
 
 	// Get user by "email"
 	user, err := repository.GetUserByEmail(input.Email)
-	if err != nil {
+
+	// Check Password
+	if err != nil || !utils.CheckPassword(user.Password, input.Password) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
 
-	// Check Password
-	if !utils.CheckPassword(user.Password, input.Password) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+	//Generate JWT
+	token, err := utils.CreateJWT(user.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login Successfull",
+		"token":   token,
 		"data": gin.H{
 			"user": user.Email,
 		},
