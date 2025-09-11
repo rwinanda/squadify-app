@@ -2,11 +2,11 @@ package repository
 
 import (
 	"squadify-app/config"
-	"squadify-app/dto"
+	"squadify-app/dto/request"
 	"squadify-app/models"
 )
 
-func CreateUser(input *dto.RegisterInput, hashedPassword string) (*models.User, error) {
+func CreateUser(input *request.RegisterRequest, hashedPassword string) (*models.User, error) {
 	user := models.User{
 		Username:   input.Username,
 		Email:      input.Email,
