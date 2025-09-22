@@ -6,6 +6,7 @@ func RegisterRoutes(app *gin.Engine) {
 	api := app.Group("/api")
 
 	AuthRoutes(api)
+	ProfileRoutes(api)
 
 	// TODO: Add your route registrations here
 	// Example route groups

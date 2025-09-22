@@ -49,7 +49,7 @@ func Login(c *gin.Context) {
 	}
 
 	// Get user by email
-	user, err := repository.GetUserByEmail(input.Email)
+	user, err := repository.GetUserByEmail(input.Identifier)
 
 	// Check Password
 	if err != nil || !utils.CheckPassword(user.Password, input.Password) {
@@ -58,7 +58,7 @@ func Login(c *gin.Context) {
 	}
 
 	// Generate JWT
-	token, err := utils.CreateJWT(user.Email)
+	token, err := utils.CreateJWT(user.ID)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "Failed to generate token")
 		return

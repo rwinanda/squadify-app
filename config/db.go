@@ -25,7 +25,10 @@ func ConnectDB() {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
-	DB.AutoMigrate(&models.User{})
+	DB.AutoMigrate(&models.User{}, &models.UserProfile{})
+	// if err := migrations.MigrateUserProfiles(DB); err != nil {
+	// 	log.Fatalf("Migration failed: %v", err)
+	// }
 	// TODO: Add other models here
 	// DB.AutoMigrate(&models.Contact{})
 
