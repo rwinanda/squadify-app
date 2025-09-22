@@ -20,21 +20,45 @@ func Register(c *gin.Context) {
 		return
 	}
 
+	// Check if email already exists
+	existingUserByEmail, _ := repository.GetUserByEmail(input.Email)
+	if existingUserByEmail != nil {
+		response.Error(c, http.StatusBadRequest, "Email already registered")
+		return
+	}
+
+	// Check if username already exists
+	existingUserByUsername, _ := repository.GetUserByEmail(input.Username)
+	if existingUserByUsername != nil {
+		response.Error(c, http.StatusBadRequest, "Username already taken")
+		return
+	}
+
+	// Hash password
 	hashedPassword, err := utils.HashPassword(input.Password)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "Failed to hash password")
 		return
 	}
 
+	// Create user
 	user, err := repository.CreateUser(&input, hashedPassword)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, "Registration failed")
 		return
 	}
 
+	// Generate JWT
+	token, err := utils.CreateJWT(user.ID)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, "Failed to generate token")
+		return
+	}
+
 	data := gin.H{
 		"username": user.Username,
 		"email":    user.Email,
+		"token":    token,
 	}
 	response.Success(c, data, "Registration successful")
 }
