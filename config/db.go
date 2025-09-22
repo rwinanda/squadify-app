@@ -26,6 +26,17 @@ func ConnectDB() {
 	}
 
 	DB.AutoMigrate(&models.User{}, &models.UserProfile{})
+
+	// Ensure foreign key constraints with cascading actions
+	DB.Exec(`
+    ALTER TABLE user_profiles
+    DROP CONSTRAINT IF EXISTS fk_users_profiles,
+    ADD CONSTRAINT fk_users_profiles
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE;
+`)
+
 	// if err := migrations.MigrateUserProfiles(DB); err != nil {
 	// 	log.Fatalf("Migration failed: %v", err)
 	// }
