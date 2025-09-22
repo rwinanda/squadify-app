@@ -33,3 +33,21 @@ func CreateProfile(c *gin.Context) {
 
 	response.Success(c, profile, "Login successful")
 }
+
+func GetProfileByID(c *gin.Context) {
+	// Claim jwt to get id
+	userIDRaw, exists := c.Get("id")
+	if !exists {
+		response.Error(c, http.StatusUnauthorized, "User ID not found")
+		return
+	}
+	userID := userIDRaw.(uint)
+
+	profile, err := repository.GetProfileByID(userID)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, fmt.Sprintf("Something went wrong: %v", err))
+		return
+	}
+
+	response.Success(c, profile, "Profile fetched")
+}
