@@ -26,8 +26,14 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		// if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		// 	c.Set("id", claims["id"])
+		// }
+
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
-			c.Set("email", claims["email"])
+			if idFloat, ok := claims["id"].(float64); ok {
+				c.Set("id", uint(idFloat)) // store as uint
+			}
 		}
 
 		c.Next()

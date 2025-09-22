@@ -8,16 +8,9 @@ import (
 
 func CreateUser(input *request.RegisterRequest, hashedPassword string) (*models.User, error) {
 	user := models.User{
-		Username:   input.Username,
-		Email:      input.Email,
-		Password:   string(hashedPassword),
-		FirstName:  input.FirstName,
-		MiddleName: input.MiddleName,
-		LastName:   input.LastName,
-		Latitude:   input.Latitude,
-		Longitude:  input.Longitude,
-		Address:    input.Address,
-		Gender:     input.Gender,
+		Username: input.Username,
+		Email:    input.Email,
+		Password: string(hashedPassword),
 	}
 
 	if err := config.DB.Create(&user).Error; err != nil {
@@ -26,9 +19,9 @@ func CreateUser(input *request.RegisterRequest, hashedPassword string) (*models.
 	return &user, nil
 }
 
-func GetUserByEmail(email string) (*models.User, error) {
+func GetUserByEmail(identifier string) (*models.User, error) {
 	var user models.User
-	if err := config.DB.Where("email = ?", email).First(&user).Error; err != nil {
+	if err := config.DB.Where("email = ? OR username = ?", identifier, identifier).First(&user).Error; err != nil {
 		return nil, err
 	}
 
