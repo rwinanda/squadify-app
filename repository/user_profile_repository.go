@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"squadify-app/config"
 	"squadify-app/dto/request"
+	"squadify-app/dto/response"
 	"squadify-app/models"
 
 	"gorm.io/gorm"
@@ -39,4 +40,27 @@ func CreateProfile(input *request.CreateProfileRequest, userID uint) (*models.Us
 	}
 
 	return &userProfile, nil
+}
+
+func GetProfileByID(userID uint) (*response.GetProfileResponse, error) {
+	var existingProfile models.UserProfile
+
+	if err := config.DB.Preload("User").Where("user_id = ?", userID).First(&existingProfile).Error; err != nil {
+		return nil, err
+	}
+
+	// map fields into response struct
+	profileResponse := &response.GetProfileResponse{
+		Username:   existingProfile.User.Username,
+		Email:      existingProfile.User.Email,
+		FirstName:  existingProfile.FirstName,
+		MiddleName: existingProfile.MiddleName,
+		LastName:   existingProfile.LastName,
+		Latitude:   existingProfile.Latitude,
+		Longitude:  existingProfile.Longitude,
+		Address:    existingProfile.Address,
+		Gender:     existingProfile.Gender,
+	}
+
+	return profileResponse, nil
 }

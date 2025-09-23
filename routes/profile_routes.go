@@ -12,6 +12,7 @@ func ProfileRoutes(api *gin.RouterGroup) {
 
 	router.Use(middleware.AuthMiddleware())
 	{
+		router.GET("", handlers.GetProfileByID)
 		router.POST("", handlers.CreateProfile)
 	}
 }
