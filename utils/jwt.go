@@ -7,7 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var secretKey = []byte(os.Getenv("JWT_KEY"))
+var secretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 
 func CreateJWT(id uint) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,

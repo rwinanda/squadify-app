@@ -25,7 +25,18 @@ func ConnectDB() {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
-	DB.AutoMigrate(&models.User{}, &models.UserProfile{})
+	// Run migrations in the correct order
+	err = DB.AutoMigrate(
+		&models.Gender{},
+		&models.User{},
+		&models.Category{},
+		&models.UserProfile{},
+		&models.UserCategory{},
+	)
+
+	if err != nil {
+		log.Fatalf("Migration failed: %v", err)
+	}
 
 	// Ensure foreign key constraints with cascading actions
 	DB.Exec(`

@@ -9,5 +9,5 @@ type GetProfileResponse struct {
 	Latitude   float64 `json:"latitude"`
 	Longitude  float64 `json:"longitude"`
 	Address    string  `json:"address"`
-	Gender     int64   `json:"gender"`
+	Gender     string  `json:"gender"`
 }

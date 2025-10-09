@@ -28,14 +28,17 @@ func CreateProfile(input *request.CreateProfileRequest, userID uint) (*models.Us
 		Latitude:   input.Latitude,
 		Longitude:  input.Longitude,
 		Address:    input.Address,
-		Gender:     input.Gender,
+		GenderID:   uint(input.GenderID),
 	}
 
 	if err := config.DB.Create(&userProfile).Error; err != nil {
 		return nil, err
 	}
 
-	if err := config.DB.Preload("User").Find(&userProfile).Error; err != nil {
+	if err := config.DB.
+		Preload("User").
+		Preload("Gender").
+		First(&userProfile, userProfile.ID).Error; err != nil {
 		return nil, err
 	}
 
@@ -45,11 +48,14 @@ func CreateProfile(input *request.CreateProfileRequest, userID uint) (*models.Us
 func GetProfileByID(userID uint) (*response.GetProfileResponse, error) {
 	var existingProfile models.UserProfile
 
-	if err := config.DB.Preload("User").Where("user_id = ?", userID).First(&existingProfile).Error; err != nil {
+	if err := config.DB.
+		Preload("User").
+		Preload("Gender").
+		Where("user_id = ?", userID).
+		First(&existingProfile).Error; err != nil {
 		return nil, err
 	}
 
-	// map fields into response struct
 	profileResponse := &response.GetProfileResponse{
 		Username:   existingProfile.User.Username,
 		Email:      existingProfile.User.Email,
@@ -59,7 +65,7 @@ func GetProfileByID(userID uint) (*response.GetProfileResponse, error) {
 		Latitude:   existingProfile.Latitude,
 		Longitude:  existingProfile.Longitude,
 		Address:    existingProfile.Address,
-		Gender:     existingProfile.Gender,
+		Gender:     existingProfile.Gender.Name,
 	}
 
 	return profileResponse, nil

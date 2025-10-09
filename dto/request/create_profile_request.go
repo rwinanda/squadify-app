@@ -7,5 +7,5 @@ type CreateProfileRequest struct {
 	Latitude   float64 `json:"latitude" binding:"required"`
 	Longitude  float64 `json:"longitude" binding:"required"`
 	Address    string  `json:"address" binding:"required"`
-	Gender     int64   `json:"gender" binding:"required"`
+	GenderID   int64   `json:"gender_id" binding:"required"`
 }
